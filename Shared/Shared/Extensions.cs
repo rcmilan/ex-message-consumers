@@ -12,7 +12,7 @@ namespace Shared
             return encodedMessage;
         }
 
-        public static void Loader(int ndots = 3)
+        public static void Loader(int ndots = 3, bool success = true)
         {
             for (int dots = 0; dots < ndots; dots++)
             {
@@ -21,7 +21,23 @@ namespace Shared
                 Thread.Sleep(500);
             }
 
-            Console.WriteLine("\nConcluido!");
+            if (success)
+                Console.WriteLine("\nConcluido!!\n");
+            else
+                Console.WriteLine("\nERRO!!\n");
+        }
+
+        public static bool FakeProcess(int min = 3, int max = 15)
+        {
+            var random = new Random();
+
+            var ndots = random.Next(min, max);
+
+            var success = ndots % 2 == 0;
+
+            Loader(ndots, success);
+
+            return success;
         }
     }
 }

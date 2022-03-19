@@ -2,7 +2,7 @@
 
 namespace Shared.MQ
 {
-    internal class MQConfig
+    public class MQConfig
     {
         public IModel BuildModel => BuildConnection().CreateModel();
 

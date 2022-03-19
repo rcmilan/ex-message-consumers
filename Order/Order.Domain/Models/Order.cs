@@ -18,11 +18,14 @@ namespace Order.Domain.Models
 
         public decimal Total { get => Recipes.Sum(r => r.Price.Amount); }
 
+        public string Description => $"[{Id}] valor: {Total}";
+
         public Order AddRecipe(Recipe recipe)
         {
             Recipes.Add(recipe);
 
             return this;
         }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace Shared.MQ.Services
 {
@@ -15,6 +16,32 @@ namespace Shared.MQ.Services
             _properties.Persistent = true;
         }
 
+        public void BasicAck(ulong deliveryTag)
+        {
+            _model.BasicAck(deliveryTag, multiple: false);
+        }
+
+        public void BasicConsume(string exchange, IBasicConsumer consumer, bool autoAck = false)
+        {
+            _model.BasicConsume(exchange, autoAck, consumer);
+        }
+
+        public EventingBasicConsumer CreateEventingBasicConsumer(string exchange)
+        {
+            DeclareQueue(exchange);
+
+            return new EventingBasicConsumer(_model);
+        }
+
+        public void EnsureExchange(string exchange, string exchangeType = ExchangeType.Direct, IDictionary<string, object> exchangeProperties = null)
+        {
+            _model.ExchangeDeclare(exchange, exchangeType, true, false, exchangeProperties);
+
+            DeclareQueue(exchange);
+
+            _model.QueueBind(exchange, exchange, "", new Dictionary<string, object>());
+        }
+
         public T Publish<T>(string exchange, T message) where T : IBaseEvent
         {
             EnsureExchange(exchange);
@@ -26,14 +53,9 @@ namespace Shared.MQ.Services
             return message;
         }
 
-
-        public void EnsureExchange(string exchange, string exchangeType = ExchangeType.Direct, IDictionary<string, object> exchangeProperties = null)
+        private void DeclareQueue(string queue)
         {
-            _model.ExchangeDeclare(exchange, exchangeType, true, false, exchangeProperties);
-
-            _model.QueueDeclare(exchange, durable: true, autoDelete: false, exclusive: false);
-
-            _model.QueueBind(exchange, exchange, "", new Dictionary<string, object>());
+            _model.QueueDeclare(queue, durable: true, autoDelete: false, exclusive: false);
         }
     }
 }

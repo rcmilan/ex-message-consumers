@@ -2,5 +2,6 @@
 {
     public interface IBaseEvent
     {
+        string Description { get; }
     }
 }

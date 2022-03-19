@@ -14,7 +14,7 @@ namespace Order.App.Services
 
         internal Task<Domain.Models.Order> Pay(Domain.Models.Order order)
         {
-            _mqService.Publish(Constants.PAYMENT_REQUEST_EXCHANGE, order);
+            _mqService.Publish(Exchanges.PAYMENT_REQUEST, order);
 
             return Task.FromResult(order);
         }

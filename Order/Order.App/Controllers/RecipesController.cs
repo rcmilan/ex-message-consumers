@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Order.App.Services;
 using Order.Domain.Models;
 
 namespace Order.App.Controllers
@@ -9,7 +10,9 @@ namespace Order.App.Controllers
     {
         private readonly IList<Recipe> _recipes = new List<Recipe>();
 
-        public RecipesController()
+        private readonly PaymentService paymentService;
+
+        public RecipesController(PaymentService paymentService)
         {
             _recipes.Add(new Recipe(1, "Prato A", new Shared.Money(100.11m, Shared.Currency.BRL)));
             _recipes.Add(new Recipe(2, "Prato B", new Shared.Money(950.22m, Shared.Currency.BRL)));
@@ -22,6 +25,8 @@ namespace Order.App.Controllers
             _recipes.Add(new Recipe(7, "Option 1", new Shared.Money(111.77m, Shared.Currency.EUR)));
             _recipes.Add(new Recipe(8, "Option 2", new Shared.Money(222.88m, Shared.Currency.EUR)));
             _recipes.Add(new Recipe(9, "Option 3", new Shared.Money(333.99m, Shared.Currency.EUR)));
+
+            this.paymentService = paymentService;
         }
 
         [HttpGet]
@@ -31,7 +36,7 @@ namespace Order.App.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post()
+        public async Task<IActionResult> Post()
         {
             var order = Domain.Models.Order
                 .CreateNew()
@@ -41,7 +46,9 @@ namespace Order.App.Controllers
                 .AddRecipe(_recipes[1])
                 ;
 
-            return Ok(order);
+            var result = await paymentService.Pay(order);
+
+            return Ok(result);
         }
     }
 }

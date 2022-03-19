@@ -1,6 +1,8 @@
-﻿namespace Order.Domain.Models
+﻿using Shared;
+
+namespace Order.Domain.Models
 {
-    public class Order : BaseModel<Guid>
+    public class Order : BaseModel<Guid>, IBaseEvent
     {
         public static Order CreateNew()
         {

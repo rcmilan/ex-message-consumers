@@ -1,0 +1,19 @@
+version: "3.4"
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: ex-rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    image: rabbitmq:3.9-management
+    volumes:
+        - .docker/rabbitmq/data/:/var/lib/rabbitmq/
+        - .docker/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_net
+
+networks:
+  rabbitmq_net:
+    driver: bridge
